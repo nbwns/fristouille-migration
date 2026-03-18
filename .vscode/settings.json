@@ -1,0 +1,9 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "prettier.printWidth": 70,
+  "prettier.singleQuote": true,
+  "files.associations": {
+    "_redirects": "txt"
+  }
+}

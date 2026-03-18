@@ -1,0 +1,8 @@
+# Local Netlify folder
+.netlify
+.env
+.nuxt/
+.output/
+node_modules/
+static/sw.js
+dist

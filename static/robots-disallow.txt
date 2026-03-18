@@ -1,0 +1,3 @@
+# Non-production rules
+User-agent: *
+Disallow: /

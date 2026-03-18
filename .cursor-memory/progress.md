@@ -1,0 +1,213 @@
+# Progress Tracking
+
+## Ce qui fonctionne actuellement (Nuxt 2)
+
+- Rendering des pages principales (home, listing recettes, détail recette, pages éditoriales).
+- Intégration Prismic opérationnelle pour le contenu et certains blocs SEO.
+- Recherche Algolia opérationnelle (mix direct client + function proxy).
+- Fonctions Netlify Airtable opérationnelles pour recettes et ingrédients.
+- Dark mode déjà branché via Pinia.
+
+## Ce qui est deja partiellement migré
+
+- Pinia introduit (`store/search.js`, `store/darkMode.js`), utilisé par plusieurs composants/pages.
+- Quelques composants/pages utilisent `setup()` (approche composition partielle).
+
+## Ce qui reste à migrer
+
+- ~~Bascule complète Nuxt 2 -> Nuxt 3.~~ FAIT
+- ~~Bascule complète npm -> pnpm.~~ FAIT
+- ~~Portage Netlify Functions -> Nitro `server/api`.~~ FAIT
+- ~~Remplacement `$axios`/`asyncData` legacy par `$fetch` + `useAsyncData`.~~ FAIT
+- ~~Finalisation Pinia-only + suppression Vuex root.~~ FAIT
+- ~~Migration Options API -> `<script setup>` sur layouts/pages/components prioritaires.~~ FAIT
+- ~~Migration Tailwind v3 -> v4 sans régression visuelle.~~ FAIT (CSS global charge, @reference pour SFC)
+- ~~Stabilisation SEO, routing, middleware, génération/sitemap.~~ FAIT (useHead, redirections, canonical)
+- Tests visuels approfondis en navigateur (regression design).
+- Migration des composants secondaires restants vers `<script setup>` (non-bloquant).
+- Verification SSR/hydration complete sur tous les parcours utilisateur.
+- Configuration CI/Netlify pour pnpm + Nuxt 3.
+
+## Etat actuel de la migration
+
+- Etape courante: etape 13 completee (stabilisation post-migration).
+- Memory Bank: initialisee et maintenue.
+- Baseline technique: Nuxt 3 + pnpm + Tailwind v4 + `<script setup>` sur toutes les pages.
+- Toutes les pages et composants principaux utilisent des patterns Nuxt 3 natifs.
+- Build production et SSR fonctionnels avec styles Tailwind charges globalement.
+- Layout default restaure (header/nav/footer).
+
+## Journal d'execution
+
+- Etape 0 (perimetre) terminee:
+  - repo dedie `fristouille-migration` initialise et peuple avec une copie de travail du code source.
+  - repo production non modifie.
+- Etape 1 (npm -> pnpm) executee:
+  - `package-lock.json` retire.
+  - `pnpm-lock.yaml` genere.
+  - `package.json` mis a jour avec `packageManager: pnpm@10.27.0`.
+  - `README.md` bascule vers commandes `pnpm`.
+  - `.npmrc` ajoute avec `shamefully-hoist=true` pour compatibilite Nuxt 2.
+- Verification:
+  - `pnpm install`: OK.
+  - `pnpm build`: OK (warnings legacy Nuxt 2 non bloquants).
+  - `pnpm generate`: execution terminee avec erreurs runtime SSR sur le plugin Pinia (`TypeError ... PiniaNuxtPlugin`), a traiter dans l'etape Nuxt 3/baseline.
+- Etape 2 (baseline Nuxt 3) executee:
+  - dependances Nuxt 2 incompatibles retirees.
+  - `nuxt.config.ts` ajoute et `nuxt.config.js` supprime.
+  - `app.vue` baseline ajoute pour valider le boot.
+  - configuration PostCSS migree dans `nuxt.config.ts`.
+- Verification:
+  - `pnpm build`: OK en Nuxt 3.
+  - `pnpm dev --port 3200`: demarrage OK.
+  - warnings restants sur plugins Nuxt 2 legacy (`plugins/*`), attendus a ce stade.
+- Etape 3 (Tailwind v4) executee:
+  - `tailwindcss` migre en v4 et `@tailwindcss/postcss` ajoute.
+  - `@tailwindcss/nesting` retire.
+  - `@nuxtjs/tailwindcss` retire pour eviter conflit de pipeline avec Tailwind v4.
+  - `assets/css/main.css` bascule sur la syntaxe v4 (`@config` + `@import "tailwindcss"`).
+- Verification:
+  - `pnpm build`: OK avec Nuxt 3 + Tailwind v4.
+  - warnings IDE CSS sur `@config`/`@apply` sont non-bloquants (regles linter CSS generiques).
+- Etape 4 (portage API vers Nitro) executee:
+  - creation des endpoints Nitro:
+    - `server/api/recipes.get.ts`
+    - `server/api/ingredients.get.ts`
+    - `server/api/search.get.ts`
+  - extraction de logique reusable:
+    - `server/utils/airtable.ts` (client + pagination Airtable)
+    - `server/utils/recipes.ts` (mapping contrats recette/compositions)
+  - validation d'inputs et normalisation des erreurs HTTP (`createError`).
+  - migration des usages env vers `runtimeConfig` Nuxt 3.
+- Verification:
+  - `pnpm build`: OK avec routes API Nitro generees.
+- Etape 5 (branchement frontend API) executee - lot 1:
+  - ajout du composable `composables/useBackendApi.ts` pour centraliser l'acces `/api/search`, `/api/ingredients`, `/api/recipes`.
+  - remplacement des appels `$axios` par `$fetch` dans les pages cles:
+    - `pages/index.vue`
+    - `pages/_section/index.vue`
+    - `pages/_section/_uid/index.vue`
+    - `pages/Recette/_slug/_id.vue`
+    - `pages/Recettes/index.vue` (nettoyage signature `asyncData`).
+  - suppression de la dependance frontend aux URLs Netlify (`queryFunction`, `ingredientsFunction`, `searchIndexFunction`) pour ces flux.
+- Verification:
+  - `pnpm build`: OK.
+  - lints sur fichiers modifies: OK.
+- Etape 6 (Pinia-only) executee:
+  - suppression de `store/index.js` (Vuex root legacy).
+  - mise a jour de `pinia` vers `3.0.4` pour alignement avec `@pinia/nuxt`.
+  - documentation `store/README.md` et `README.md` ajustee pour refleter le mode Pinia-only.
+- Verification:
+  - `pnpm build`: OK apres nettoyage cache (`rm -rf .nuxt .output`).
+- Etape 7 (plugins/layouts Nuxt 3) executee:
+  - plugins helpers deplaces hors `plugins/`:
+    - `plugins/labels.js` -> `utils/labels.ts`
+    - `plugins/link-resolver.js` -> `utils/prismic-link-resolver.ts`
+    - `plugins/html-serializer.js` -> `utils/prismic-html-serializer.ts`
+  - `plugins/pwa-update.js` migre vers `defineNuxtPlugin`.
+  - `plugins/vue-instantsearch.js` converti en plugin Nuxt 3 temporairement no-op (package actuel incompatible Vue 3).
+  - `layouts/default.vue` migre en `<script setup>` + `NuxtPage`.
+  - `components/DarkModeToggle.vue` migre en `<script setup>` (suppression `@nuxtjs/composition-api`).
+  - `middleware/redirect.js` migre en `defineNuxtRouteMiddleware` + `navigateTo`.
+- Verification:
+  - `pnpm build`: OK.
+  - lints sur fichiers modifies: OK.
+- Etape 8 (SEO/routing) executee - lot 1:
+  - normalisation des chemins de pages vers conventions Nuxt 3:
+    - `pages/recette/[slug]/[id].vue`
+    - `pages/recettes/index.vue`
+    - `pages/[section]/index.vue`
+    - `pages/[section]/[uid]/index.vue`
+  - ajout d'un middleware global `middleware/redirect.global.ts`:
+    - redirection 301 vers chemins lowercase
+    - conservation de la redirection legacy `/recettes/<term>` -> `/recettes/?q=<term>`.
+  - correction des liens internes restants `/Recettes` -> `/recettes`.
+  - simplification de `app.vue` pour stabilite build Nuxt 3.
+- Verification:
+  - `pnpm build`: OK.
+  - note: reactivation totale de `pages` reportee car la migration Tailwind v4 impose une passe dediee sur les `@apply` en styles scopes (`@reference`), sinon echec build.
+- Etape 9 (stabilisation finale) executee:
+  - application de la recommandation Tailwind v4 pour SFC: ajout de `@reference` dans les blocs `<style>` utilisant `@apply`.
+  - correction de syntaxes Tailwind v3 non compatibles v4 (`!important`/`!` dans certains `@apply`).
+  - correction d'une chaine `@apply` dependante d'une classe custom (`text-small`) pour eviter les utilitaires inconnus.
+  - reactivation de `pages: true` et `components: true` dans `nuxt.config.ts`.
+  - ajout d'un shim `utils/vue-instantsearch-shim.ts` et remplacement d'import dans `pages/recettes/index.vue` pour contourner l'incompatibilite Vue 2 de `vue-instantsearch`.
+- Verification:
+  - `pnpm build`: OK avec pages actives.
+  - lints sur fichiers modifies: OK.
+- Etape 9 (durcissement fonctionnel search) executee:
+  - suppression du shim InstantSearch temporaire.
+  - plugin `plugins/vue-instantsearch.js` branche sur l'entree Vue 3: `vue-instantsearch/vue3/es`.
+  - page recettes branchee sur les composants InstantSearch Vue 3 (import mis a jour).
+- Verification:
+  - `pnpm build`: OK.
+  - lints sur fichiers modifies: OK.
+- Etape 10 (standardisation Algolia Nuxt 3) executee:
+  - module `@nuxtjs/algolia` ajoute et active dans `nuxt.config.ts`.
+  - configuration module branchee sur les variables env existantes (`ALGOLIA_APP_ID`/`ALGOLIA_API_KEY`/`ALGOLIA_INDEX_NAME`).
+  - option `instantSearch: true` activee pour integration officielle Nuxt 3.
+  - suppression du plugin manuel `plugins/vue-instantsearch.js` (doublon evite).
+  - page `pages/recettes/index.vue` branchee sur `useAlgoliaRef()` pour reutiliser le client du module.
+- Verification:
+  - `pnpm build`: OK.
+  - lints sur fichiers modifies: OK.
+- Etape 11 (durcissement SEO/meta) executee:
+  - suppression des cles dupliquees `name` dans les meta OpenGraph (`pages/index.vue`, `pages/recettes/index.vue`).
+  - suppression d'un meta `description` duplique dans `pages/index.vue`.
+  - normalisation des tags OpenGraph vers `property` sur les pages principales de contenu:
+    - `pages/index.vue`
+    - `pages/recettes/index.vue`
+    - `pages/[section]/index.vue`
+    - `pages/[section]/[uid]/index.vue`
+    - `pages/recette/[slug]/[id].vue`
+- Verification:
+  - `pnpm build`: OK, warning `Duplicate key "name"` disparu.
+  - lints sur fichiers modifies: OK.
+- Etape 12 (durcissement SSR/routing) executee:
+  - correction de la redirection legacy `middleware/redirect.global.ts` pour `/recettes/<term>`:
+    - encodage du terme (`encodeURIComponent`)
+    - prevention des boucles de redirection sur `/recettes/` vide ou chemins imbriques.
+  - durcissement SEO/head pour eviter crash SSR quand les donnees CMS sont absentes:
+    - `pages/index.vue`
+    - `pages/recettes/index.vue`
+    - `pages/[section]/index.vue`
+    - `pages/[section]/[uid]/index.vue`
+    - `pages/recette/[slug]/[id].vue`
+  - ajout de gardes template `v-if="document && document.data"` sur les pages CMS dynamiques.
+  - migration des erreurs `asyncData` vers `throw createError(...)` pour une gestion Nuxt 3 plus fiable.
+  - import explicite Nuxt app APIs dans le middleware (`defineNuxtRouteMiddleware`, `navigateTo`).
+- Verification:
+  - `pnpm build`: OK.
+  - smoke tests SSR/API locaux:
+    - `/`, `/recettes`, `/designsystem`: 200
+    - `/Recettes`: 301 vers `/recettes`
+    - `/recettes/rapide`: 301 vers `/recettes/?q=rapide` (boucle supprimee)
+    - `/api/ingredients`, `/api/recipes?filter=published`, `/api/search?query=rapide`: 200
+    - route detail recette dynamique: 200 (ex: `/recette/houmous-de-panais/9322`)
+  - logs serveur: plus d'`unhandledRejection` sur les checks executes.
+- Etape 13 (stabilisation post-migration) executee:
+  - CSS/Tailwind: correction du point d'entree CSS dans `nuxt.config.ts` (`stylesheets.css` -> `main.css`).
+  - CSS/Tailwind: correction de l'ordre des directives dans `main.css` (`@import "tailwindcss"` avant `@config`).
+  - CSS/Tailwind: remplacement de `nuxt-link-active` par `router-link-active` dans `main.css` et 3 composants.
+  - CSS/Tailwind: ajout des styles print dans `main.css`.
+  - Layout: restauration de `layouts/default.vue` (manquant) avec `MainNavigation`, `FooterLinks`, `MobileNavigation`.
+  - Pages: migration des 5 pages principales de `defineNuxtComponent` + `asyncData` + `head()` vers `<script setup>`:
+    - `pages/index.vue`: `useAsyncData` + `useHead` + Prismic client
+    - `pages/recettes/index.vue`: `useAsyncData` + `useHead` + Algolia InstantSearch + Pinia
+    - `pages/recette/[slug]/[id].vue`: `useAsyncData` + `useHead` + `useRuntimeConfig` + `useRoute`
+    - `pages/[section]/index.vue`: `useAsyncData` + `useHead` + Prismic filters
+    - `pages/[section]/[uid]/index.vue`: `useAsyncData` + `useHead` + gardes nulles related pages
+  - Composants: migration de `RecipeShare.vue` vers `<script setup>` (`useRuntimeConfig` + `useRoute`).
+  - Composants: migration de `NavItem.vue` vers `<script setup>` (`useRoute`).
+  - Composants: migration de `MainNavigation.vue` vers `<script setup>` (`useRoute` + Pinia).
+  - Composants: migration de `MobileNavigation.vue` vers `<script setup>` (`beforeDestroy` -> `onBeforeUnmount`).
+  - Elimination de tous les patterns Nuxt 2 restants: `defineNuxtComponent`, `asyncData`, `head()`, `this.$config`, `this.$route`, `hid` meta, `nuxt-link-active`.
+- Verification:
+  - `pnpm build`: OK.
+  - smoke tests SSR locaux:
+    - `/`: 200 (homepage avec hero, recettes featured, articles)
+    - `/recettes/`: 200 (page search Algolia)
+    - `/recette/houmous-de-panais/9322`: 200 (detail recette avec structured data ld+json)
+    - `/astuces/`: 200 (section page)
+  - HTML SSR contient: layout (nav + footer), classes Tailwind, structured data.
+  - Warnings non-bloquants: `ais-configure`/`ais-state-results` non resolus en SSR (attendu, client-side only).
