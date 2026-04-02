@@ -4,7 +4,7 @@
   "private": true,
   "packageManager": "pnpm@10.27.0",
   "scripts": {
-    "dev": "CHOKIDAR_USEPOLLING=1 CHOKIDAR_INTERVAL=300 nuxt dev --port 3200",
+    "dev": "nuxt dev --port 3200",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
