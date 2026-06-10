@@ -21,38 +21,36 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'ServingsAdjuster',
-  props: {
-    value: {
-      type: Number,
-      required: true
-    }
-  },
-  data() {
-    return {
-      servings: this.value
-    }
-  },
-  methods: {
-    decreaseServings() {
-      if (this.servings > 1) {
-        this.servings--
-        this.$emit('input', this.servings)
-      }
-    },
-    increaseServings() {
-      if (this.servings < 30) {
-        this.servings++
-        this.$emit('input', this.servings)
-      }
-    },
-    updateServings() {
-      this.$emit('input', this.servings)
-    }
+<script setup>
+const props = defineProps({
+  modelValue: {
+    type: Number,
+    required: true
   }
-}
+});
+
+const emit = defineEmits(['update:modelValue']);
+
+const servings = ref(props.modelValue);
+
+const decreaseServings = () => {
+  console.log("decrease", servings.value);
+  if (servings.value > 1) {
+    servings.value--;
+    emit('update:modelValue', servings.value);
+  }
+};
+
+const increaseServings = () => {
+  if (servings.value < 30) {
+    servings.value++;
+    emit('update:modelValue', servings.value);
+  }
+};
+
+const updateServings = () => {
+  emit('update:modelValue', servings.value);
+};
 </script>
 
 <style scoped>
@@ -62,7 +60,6 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;

@@ -6,46 +6,33 @@
   </div>
 </template>
 
-<script>
-import ServingsAdjuster from './ServingsAdjuster.vue';
-import IngredientList from './IngredientList.vue';
-
-export default {
-  components: {
-    ServingsAdjuster,
-    IngredientList,
+<script setup>
+const props = defineProps({
+  ingredients: {
+    type: Array,
+    default: () => []
   },
-  props: {
-    ingredients: {
-      type: Array,
-      default: () => []
-    },
-    initialServings: {
-      type: Number,
-      default: 2
-    },
-    recipeYield: {
-      type: Number,
-      default: 2
-    }
+  initialServings: {
+    type: Number,
+    default: 2
   },
-  data() {
-    return {
-      localServings: this.initialServings,
-    };
-  },
-  computed: {
-    servingsRatio() {
-      return this.localServings / this.recipeYield;
-    },
-  },
-  watch: {
-    localServings(newValue) {
-      this.$emit('update:servings', newValue);
-    },
-  },
-  mounted(){
-    console.log("recipeingredients", this.ingredients);
+  recipeYield: {
+    type: Number,
+    default: 2
   }
-};
+});
+
+const emit = defineEmits(['update:servings']);
+
+const localServings = ref(props.initialServings);
+
+const servingsRatio = computed(() => localServings.value / props.recipeYield);
+
+watch(localServings, (newValue) => {
+  emit('update:servings', newValue);
+});
+
+onMounted(() => {
+  console.log("recipeingredients", props.ingredients);
+});
 </script>

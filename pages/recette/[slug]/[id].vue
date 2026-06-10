@@ -13,14 +13,12 @@
 					<recipe-share class="print:hidden" :name="recipeName"></recipe-share>
 				</client-only>
 
-				<client-only>
 					<RecipeIngredients
 						v-if="compositions && compositions.length"
 						:ingredients="compositions"
 						:initialServings="servings"
 						:recipeYield="recipeYield"
 						@update:servings="updateServings" />
-				</client-only>
 
 				<RecipePreparation v-if="recipe" :procedure="procedure" :source="recipe.source" />
 			</div>

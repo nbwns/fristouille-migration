@@ -53,6 +53,9 @@ importers:
       vue-ssr-carousel:
         specifier: ^2.1.0
         version: 2.5.0(stylus@0.64.0)
+      vue3-carousel-nuxt:
+        specifier: ^1.1.6
+        version: 1.1.6(magicast@0.5.2)(vue@3.5.30(typescript@5.9.3))
     devDependencies:
       '@nuxtjs/prismic':
         specifier: ^5.2.0
@@ -9113,6 +9116,14 @@ packages:
   vue-ssr-carousel@2.5.0:
     resolution: {integrity: sha512-6M1HD2+5LDGBGbBGdDZG62P9EWIJedE/fIi7Hor1fuuJWMNu1g35FvSuUhmsmg5UWJzAVmd5WBk2+sVXNpw18A==}
 
+  vue3-carousel-nuxt@1.1.6:
+    resolution: {integrity: sha512-y5CTJBj3HryL0l+8pzvXyWHTj/SUiBYChsces5GMyKQoad2yMXsdofzpKSrTquoCgrd1hWHUO2DBnN6ougA0Gg==}
+
+  vue3-carousel@0.15.1:
+    resolution: {integrity: sha512-nV2ChLZtgAOikmls8WaVe37vO4Wagk4RYawePHIvXrFtduFnQODyzPx8MmXaAb6l+ka72yAi04ZeCyciiyJMyA==}
+    peerDependencies:
+      vue: ^3.5.0
+
   vue@3.5.30:
     resolution: {integrity: sha512-hTHLc6VNZyzzEH/l7PFGjpcTvUgiaPK5mdLkbjrTeWSRcEfxFrv56g/XckIYlE9ckuobsdwqd5mk2g1sBkMewg==}
     peerDependencies:
@@ -10221,7 +10232,7 @@ snapshots:
       nopt: 5.0.0
       npmlog: 5.0.1
       rimraf: 3.0.2
-      semver: 7.6.3
+      semver: 7.7.4
       tar: 6.2.1
     transitivePeerDependencies:
       - encoding
@@ -10417,7 +10428,7 @@ snapshots:
       p-filter: 4.1.0
       p-locate: 6.0.0
       read-pkg-up: 9.1.0
-      semver: 7.6.3
+      semver: 7.7.4
 
   '@netlify/functions-utils@5.3.18(encoding@0.1.13)(rollup@4.59.0)(supports-color@9.4.0)':
     dependencies:
@@ -10548,7 +10559,7 @@ snapshots:
       precinct: 11.0.5(supports-color@9.4.0)
       require-package-name: 2.0.1
       resolve: 2.0.0-next.6
-      semver: 7.6.3
+      semver: 7.7.4
       tmp-promise: 3.0.3
       toml: 3.0.0
       unixify: 1.0.0
@@ -12955,7 +12966,7 @@ snapshots:
       global-cache-dir: 4.4.0
       is-plain-obj: 4.1.0
       path-exists: 5.0.0
-      semver: 7.6.3
+      semver: 7.7.4
       write-file-atomic: 4.0.2
 
   analytics-node@6.2.0:
@@ -13440,7 +13451,7 @@ snapshots:
 
   builtins@5.1.0:
     dependencies:
-      semver: 7.6.3
+      semver: 7.7.4
 
   bukwild-stylus-library@3.2.1(stylus@0.64.0):
     dependencies:
@@ -16356,7 +16367,7 @@ snapshots:
       jest-validate: 27.5.1
       map-obj: 5.0.2
       moize: 6.1.7
-      semver: 7.6.3
+      semver: 7.7.4
 
   log-symbols@6.0.0:
     dependencies:
@@ -17171,13 +17182,13 @@ snapshots:
     dependencies:
       all-node-versions: 11.3.0
       filter-obj: 5.1.0
-      semver: 7.6.3
+      semver: 7.7.4
 
   normalize-package-data@3.0.3:
     dependencies:
       hosted-git-info: 4.1.0
       is-core-module: 2.16.1
-      semver: 7.6.3
+      semver: 7.7.4
       validate-npm-package-license: 3.0.4
 
   normalize-package-data@5.0.0:
@@ -18779,7 +18790,7 @@ snapshots:
       detect-libc: 2.1.2
       node-addon-api: 6.1.0
       prebuild-install: 7.1.3
-      semver: 7.6.3
+      semver: 7.7.4
       simple-get: 4.0.1
       tar-fs: 3.1.2
       tunnel-agent: 0.6.0
@@ -19991,6 +20002,18 @@ snapshots:
       bukwild-stylus-library: 3.2.1(stylus@0.64.0)
     transitivePeerDependencies:
       - stylus
+
+  vue3-carousel-nuxt@1.1.6(magicast@0.5.2)(vue@3.5.30(typescript@5.9.3)):
+    dependencies:
+      '@nuxt/kit': 3.21.2(magicast@0.5.2)
+      vue3-carousel: 0.15.1(vue@3.5.30(typescript@5.9.3))
+    transitivePeerDependencies:
+      - magicast
+      - vue
+
+  vue3-carousel@0.15.1(vue@3.5.30(typescript@5.9.3)):
+    dependencies:
+      vue: 3.5.30(typescript@5.9.3)
 
   vue@3.5.30(typescript@5.9.3):
     dependencies:

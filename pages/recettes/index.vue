@@ -166,7 +166,7 @@ const { $prismic } = useNuxtApp()
 
 const searchStore = useSearchStore()
 const { searchFilters, searchQuery, launchSearchFromBar } = storeToRefs(searchStore)
-const algoliaClient = useAlgoliaRef()
+const algoliaClient = useAlgoliaRef() //access to algoliasearch instance
 
 const indexName = 'Recipes'
 const query = ref('')
