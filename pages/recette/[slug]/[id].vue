@@ -149,7 +149,7 @@ async function fetchRecipeData() {
 
 onMounted(() => {
 	if (!compositions.value || !compositions.value.length) {
-		fetchRecipeData()
+		// fetchRecipeData()
 	}
 })
 

@@ -8,12 +8,14 @@ export default defineNuxtConfig({
   modules: [
     "@pinia/nuxt",
     "@nuxtjs/algolia",
+    'vue3-carousel-nuxt',
     [
       "@nuxtjs/prismic",
       {
-        endpoint:
-          process.env.PRISMIC_ENDPOINT ||
-          "https://fristouille.prismic.io/api/v2",
+        endpoint: process.env.PRISMIC_ENDPOINT || "https://fristouille.prismic.io/api/v2",
+        preview: false, // Désactive le mode preview
+        toolbar: false,  // Désactive explicitement la toolbar
+        linkResolver: "@/utils/prismic-link-resolver",
         clientConfig: {
           routes: [
             { type: "homepage", path: "/" },
