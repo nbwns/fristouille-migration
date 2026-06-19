@@ -22,8 +22,10 @@ import FeaturedArticles from '~/components/FeaturedArticles'
 import HomeSearch from '~/components/HomeSearch.vue'
 import Spacer from '~/molecules/Spacer.vue'
 import { filter } from '@prismicio/client'
+import { useRuntimeConfig } from 'nuxt/app'
 
 const { $prismic } = useNuxtApp()
+const config = useRuntimeConfig();
 
 const seasonsAndMonths = {
 	winter: { 11: 'Décembre', 0: 'Janvier', 1: 'Février', 2: 'Mars' },
@@ -44,7 +46,7 @@ const { data: pageData } = await useAsyncData('homepage', async () => {
 
 	const horizontalLists = await Promise.all(
 		horizontalListsSlices.map(async (hl) => {
-			const featuredRecipes = await $fetch('/api/search', {
+			const featuredRecipes = await $fetch(config.searchFunction, {
 				query: {
 					query: hl.primary.query_term,
 					filters: hl.primary.query_filters

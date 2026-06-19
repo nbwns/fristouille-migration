@@ -15,9 +15,11 @@ import GridOfCardsArticles from '~/components/GridOfCardsArticles.vue'
 import HeroArticleSection from '~/components/HeroArticleSection.vue'
 import RecipeCategories from '~/components/RecipeCategories'
 import { filter } from '@prismicio/client'
+import { useRuntimeConfig } from 'nuxt/app'
 
 const route = useRoute()
 const { $prismic } = useNuxtApp()
+const config = useRuntimeConfig()
 
 const { data: pageData } = await useAsyncData(
 	`section-${route.params.section}`,
@@ -41,7 +43,7 @@ const { data: pageData } = await useAsyncData(
 				const recipeCatsSlices = page.data.body.filter(s => s.slice_type === 'recipecategories')
 				if (recipeCatsSlices.length > 0) {
 					recipeCats = recipeCatsSlices[0]
-					ingredients = await $fetch('/api/ingredients')
+					ingredients = await $fetch(config.ingredientsFunction)
 				}
 			} catch (error) {
 				console.error('Error fetching recipe categories/ingredients:', error)

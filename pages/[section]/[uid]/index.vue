@@ -33,9 +33,11 @@ import ContentBlock from '~/components/ContentBlock'
 import RelatedPages from '~/components/RelatedPages'
 import CallToAction from '~/components/CallToAction'
 import ArticleHeader from '~/components/ArticleHeader.vue'
+import { useRuntimeConfig } from 'nuxt/app'
 
 const route = useRoute()
 const { $prismic } = useNuxtApp()
+const config = useRuntimeConfig()
 
 const { data: pageData } = await useAsyncData(
 	`child-${route.params.section}-${route.params.uid}`,
@@ -63,7 +65,7 @@ const { data: pageData } = await useAsyncData(
 
 				horizontalLists = await Promise.all(
 					horizontalListsSlices.map(async (hl) => {
-						const featuredRecipes = await $fetch('/api/search', {
+						const featuredRecipes = await $fetch(config.searchFunction, {
 							query: {
 								query: hl.primary.query_term,
 								filters: hl.primary.query_filters
