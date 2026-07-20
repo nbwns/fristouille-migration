@@ -51,7 +51,7 @@ export default defineNuxtConfig({
         endpoint: process.env.PRISMIC_ENDPOINT || "https://fristouille.prismic.io/api/v2",
         preview: false, // Désactive le mode preview
         toolbar: false,  // Désactive explicitement la toolbar
-        linkResolver: "@/utils/prismic-link-resolver",
+        // linkResolver: "@/utils/prismic-link-resolver",
         clientConfig: {
           routes: [
             { type: "homepage", path: "/" },

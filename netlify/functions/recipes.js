@@ -1,6 +1,8 @@
 exports.handler = async function(event, context) {
     const dotenv = require("dotenv");
     const Airtable = require("airtable");
+    const { mapRecipeCompositionRecord, mapRecipeRecord } = require("./utils/recipe");
+
     dotenv.config();
 
     let params = null;
@@ -42,50 +44,11 @@ exports.handler = async function(event, context) {
                 let recipes = []
                 
                 try{
-                    if(!sendCompositions){
-                        recipes = records.map(r => {
-                            return {
-                                recipeId: r.fields.RecipeID,
-                                name: r.fields.Name,
-                                description: r.fields.Description || null,
-                                picture: r.fields.Picture || null,
-                                pictureSmall: r.fields.PictureSmall || null,
-                                pictureMedium: r.fields.PictureMedium || null,
-                                diet: r.fields.Diet || null,
-                                preparationTime: r.fields.PreparationTime || null,
-                                cookTime: r.fields.CookTime || null,
-                                yield: r.fields.Yield || null,
-                                procedure: r.fields.Procedure,
-                                ingredients: r.fields.Ingredients || null,
-                                price: r.fields.Price || null,
-                                difficulty: r.fields.Difficulty || null,
-                                months: r.fields.Months || null,
-                                category: r.fields.Category || null,
-                                cuisine: r.fields.Cuisine || null,
-                                free: r.fields.Free || null,
-                                baseRecipe: r.fields.BaseRecipe || null,
-                                createdOn: r.fields.CreatedOn,
-                                prismicPageId: r.fields.PrismicPageID || null,
-                                slug: r.fields.Slug || null,
-                                authorName: r.fields.AuthorName ? r.fields.AuthorName[0] : null, // Protection contre undefined
-                                authorWeb: r.fields.AuthorWeb ? r.fields.AuthorWeb[0] : null,
-                                source: r.fields.Source || null,
-                                tagsList: r.fields.TagsList || null,
-                                compositionsJson: r.fields.CompositionsJSON || null,
-                                ingredientsList: r.fields.IngredientsList || null,
-                                compositionsStructuredData: r.fields.CompositionsStructuredData || null
-                            }
-                        });
+                    if(sendCompositions){
+                        recipes = records.map(mapRecipeCompositionRecord);
                     }
                     else{
-                        recipes = records.map(r => {
-                            return {
-                                recipeId: r.fields.RecipeID,
-                                recipeName: r.fields.Name,
-                                yield: r.fields.Yield || null,
-                                compositionsJson: r.fields.CompositionsJSON || null
-                            }
-                        });
+                        recipes = records.map(mapRecipeRecord);
                     }
                 }
                 catch(error){

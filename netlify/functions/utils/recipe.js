@@ -1,4 +1,4 @@
-export function mapRecipeRecord(record: any) {
+function mapRecipeRecord(record) {
   const fields = record?.fields || {};
 
   return {
@@ -34,7 +34,7 @@ export function mapRecipeRecord(record: any) {
   };
 }
 
-export function mapRecipeCompositionRecord(record: any) {
+function mapRecipeCompositionRecord(record) {
   const fields = record?.fields || {};
 
   return {
@@ -43,4 +43,9 @@ export function mapRecipeCompositionRecord(record: any) {
     yield: fields.Yield ?? null,
     compositionsJson: fields.CompositionsJSON ?? null,
   };
+}
+
+module.exports = {
+    mapRecipeRecord: mapRecipeRecord,
+    mapRecipeCompositionRecord: mapRecipeCompositionRecord
 }
