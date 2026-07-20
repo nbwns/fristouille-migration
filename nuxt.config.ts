@@ -28,14 +28,14 @@ export default defineNuxtConfig({
       }
     },
   },
-  routeRules:{
-    //generated on demand once until next deployment, cached on CDN
-     '/recette/**': { isr: true },
-     '/astuce/**': { isr: true }
-  },
-  nitro: {
-    preset: 'netlify'
-  },
+  // routeRules:{
+  //   //generated on demand once until next deployment, cached on CDN
+  //    '/recette/**': { isr: true },
+  //    '/astuce/**': { isr: true }
+  // },
+  // nitro: {
+  //   preset: 'netlify'
+  // },
   devtools: { enabled: false },
   experimental: {
     appManifest: false,
