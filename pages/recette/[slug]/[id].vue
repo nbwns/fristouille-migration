@@ -79,7 +79,7 @@ const { data: recipeData } = await useAsyncData(
 			throw createError({ statusCode: 404, statusMessage: 'Recette non trouvée' })
 		}
 
-		const res = await $fetch(config.recipeFunction, {
+		const res = await $fetch(config.public.recipeFunction, {
 			query: { filter: id }
 		})
 
@@ -133,7 +133,7 @@ async function fetchRecipeData() {
 	if (!id) return
 
 	try {
-		const res = await $fetch(config.recipeFunction, {
+		const res = await $fetch(config.public.recipeFunction, {
 			query: { filter: id, compositions: 'true' }
 		})
 

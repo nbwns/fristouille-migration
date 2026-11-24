@@ -43,7 +43,7 @@ const { data: pageData } = await useAsyncData(
 				const recipeCatsSlices = page.data.body.filter(s => s.slice_type === 'recipecategories')
 				if (recipeCatsSlices.length > 0) {
 					recipeCats = recipeCatsSlices[0]
-					ingredients = await $fetch(config.ingredientsFunction)
+					ingredients = await $fetch(config.public.ingredientsFunction)
 				}
 			} catch (error) {
 				console.error('Error fetching recipe categories/ingredients:', error)

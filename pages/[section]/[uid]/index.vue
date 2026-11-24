@@ -65,7 +65,7 @@ const { data: pageData } = await useAsyncData(
 
 				horizontalLists = await Promise.all(
 					horizontalListsSlices.map(async (hl) => {
-						const featuredRecipes = await $fetch(config.searchFunction, {
+						const featuredRecipes = await $fetch(config.public.searchFunction, {
 							query: {
 								query: hl.primary.query_term,
 								filters: hl.primary.query_filters
